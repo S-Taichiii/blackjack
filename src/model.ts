@@ -48,30 +48,25 @@ class Deck {
 
   reset(): void {
     let suits: string[] = ["H", "D", "S", "C"];
-    let values: string[] = [
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "J",
-      "Q",
-      "K",
-      "A",
-    ];
+    let values: string[] = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", ];
 
     for (let suit in suits) {
       for (let value in values) this.cards.push(new Card(suit, value));
     }
   }
 
-  shuffle(): void {}
+  shuffle(): void {
+    for (let i = this.cards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+    } 
+  }
 
-  showDeck(): void {}
+  showDeck(): void {
+    this.cards.forEach((card: Card) => {
+      console.log(card.showCard());
+    })
+  }
 }
 
 class GameDecision {

@@ -154,14 +154,14 @@ class Player {
 }
 
 class Table {
-  gameMode: string;
+  private gameMode: string;
   betDenominations: number[];
   private turnCounter: number;
-  players: Player[];
-  house: Player;
-  deck: Deck;
-  gamePhase: string;
-  resultsLog: string[];
+  private players: Player[];
+  private house: Player;
+  private deck: Deck;
+  private gamePhase: string;
+  private resultsLog: string[];
 
   constructor() {
     this.gameMode = "blackjack";
@@ -198,17 +198,56 @@ class Table {
 
   private blackjackEvaluateAndGetRoundResults(): string {}
 
-  private initializePlayersState(): void {}
+  private initializePlayersState(): void {
+    if (this.players.length === 0) return;
 
-  private initializeDeck(): void {}
+    this.players.forEach((player) => {
+      player.initialize();
+    });
 
-  private getTurnPlayer(): Player {}
+    this.house.initialize();
+  }
 
-  public haveTurn(userData: number | null): void {}
+  private initializeDeck(): void {
+    this.deck.initialize();
+    this.deck.shuffle();
+  }
 
-  private onFirstPlayer(): boolean {}
+  private getTurnPlayer(): Player {
+    let turnIndex: number = this.turnCounter % this.players.length;
 
-  private onLastPlayer(): boolean {}
+    return this.players[turnIndex];
+  }
 
-  private allPlayerActionsCompleted(): boolean {}
+  private onFirstPlayer(): boolean {
+    let turnIndex: number = this.turnCounter % this.players.length;
+    return turnIndex === 0;
+  }
+
+  private onLastPlayer(): boolean {
+    let turnIndex: number = this.turnCounter % this.players.length;
+    return turnIndex === this.players.length - 1;
+  }
+
+  private allPlayerActionsCompleted(): boolean {
+    this.players.forEach((player) => {
+      if (player.gameStatus === "betting") return false;
+    });
+
+    if (this.house.gameStatus === "betting") return false;
+
+    return true;
+  }
+
+  public haveTurn(userData?: userInput): void {
+    if (this.gamePhase === "betting") {
+      this.initializeDeck();
+      this.assignHands();
+    } else if (this.gamePhase === "acting") {
+    } else if (this.gamePhase === "evaluating") {
+    } else {
+    }
+
+    this.turnCounter++;
+  }
 }
